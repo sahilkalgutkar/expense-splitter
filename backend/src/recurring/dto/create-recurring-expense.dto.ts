@@ -30,13 +30,13 @@ export class CreateRecurringExpenseDto {
   @IsEnum(SplitType)
   splitType: SplitType;
 
-  @ValidateIf((o) => o.splitType === SplitType.EQUAL)
+  @ValidateIf((o: CreateRecurringExpenseDto) => o.splitType === SplitType.EQUAL)
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
   participantUserIds?: string[];
 
-  @ValidateIf((o) => o.splitType !== SplitType.EQUAL)
+  @ValidateIf((o: CreateRecurringExpenseDto) => o.splitType !== SplitType.EQUAL)
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })

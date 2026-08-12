@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService, AuthResult } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -26,7 +34,10 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() dto: RegisterDto, @Res({ passthrough: true }) res: Response) {
+  async register(
+    @Body() dto: RegisterDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const result = await this.authService.register(dto);
     this.setRefreshCookie(res, result);
     return this.respond(result);
@@ -34,7 +45,10 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const result = await this.authService.login(dto);
     this.setRefreshCookie(res, result);
     return this.respond(result);
@@ -42,8 +56,12 @@ export class AuthController {
 
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const rawRefreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const rawRefreshToken = req.cookies?.[REFRESH_COOKIE_NAME] as
+      string | undefined;
     const result = await this.authService.refresh(rawRefreshToken);
     this.setRefreshCookie(res, result);
     return this.respond(result);
@@ -52,7 +70,8 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const rawRefreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
+    const rawRefreshToken = req.cookies?.[REFRESH_COOKIE_NAME] as
+      string | undefined;
     await this.authService.logout(rawRefreshToken);
     res.clearCookie(REFRESH_COOKIE_NAME, { path: REFRESH_COOKIE_PATH });
     return { success: true };
