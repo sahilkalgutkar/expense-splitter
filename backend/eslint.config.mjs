@@ -33,9 +33,10 @@ export default tseslint.config(
     },
   },
   {
-    // Test doubles inherently lose type safety against Prisma's generated client shape;
-    // enforcing full type-checking on mocks is friction without payoff here.
-    files: ['**/*.spec.ts'],
+    // Test doubles inherently lose type safety against Prisma's generated client shape, and
+    // supertest's response body is always `any` — enforcing full type-checking here is friction
+    // without payoff.
+    files: ['**/*.spec.ts', '**/*.e2e-spec.ts'],
     rules: {
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',

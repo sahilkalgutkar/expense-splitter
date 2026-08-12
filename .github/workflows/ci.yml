@@ -14,9 +14,23 @@ jobs:
       run:
         working-directory: backend
     env:
-      DATABASE_URL: postgresql://expense:expense@localhost:5432/expense_splitter?schema=public
+      DATABASE_URL: postgresql://expense:expense@localhost:5432/expense_splitter_test?schema=public
       JWT_ACCESS_SECRET: ci-access-secret
       JWT_REFRESH_SECRET: ci-refresh-secret
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: expense
+          POSTGRES_PASSWORD: expense
+          POSTGRES_DB: expense_splitter_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U expense -d expense_splitter_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
 
@@ -35,8 +49,14 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Test
+      - name: Unit tests
         run: npm test
+
+      - name: Run database migrations
+        run: npx prisma migrate deploy
+
+      - name: E2E tests (real Postgres)
+        run: npm run test:e2e
 
       - name: Build
         run: npm run build
