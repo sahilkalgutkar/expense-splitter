@@ -2,11 +2,20 @@
 
 A mini Splitwise: group expense tracking, settle-up math, and recurring bills for roommates and trips.
 
-- **Frontend**: React + TypeScript, Vite, Tailwind, React Hook Form + Zod, TanStack Query
-- **Backend**: NestJS, PostgreSQL, Prisma ORM, JWT auth (access + rotating refresh tokens), Resend email invites
-- **Settle-up**: a greedy min-cash-flow algorithm (two max-heaps, largest creditor ↔ largest debtor) that reduces
-  a group's tangled debts to a minimal set of suggested payments — see
-  [`backend/src/settlements/settle-up.util.ts`](backend/src/settlements/settle-up.util.ts).
+I built the backend with NestJS, Prisma, and PostgreSQL, with JWT access tokens paired with rotating
+refresh tokens — hashed with SHA-256 and never stored raw, so a database leak alone can't be replayed —
+and Resend for invite emails. For settle-up, I wrote a greedy min-cash-flow algorithm instead of
+brute-forcing the NP-hard optimal solution: two max-heaps, largest creditor paired with largest debtor
+each round, collapsing a group's tangled debts into a minimal set of suggested payments. See
+[`backend/src/settlements/settle-up.util.ts`](backend/src/settlements/settle-up.util.ts).
+
+On the frontend I used React + TypeScript, Vite, and Tailwind, with React Hook Form + Zod for forms and
+TanStack Query for server state, including a single axios interceptor that handles silent access-token
+refresh with single-flight de-duplication so concurrent 401s don't trigger a refresh stampede.
+
+Both sides are covered by real test suites — service-level unit tests with Prisma mocked, plus an
+end-to-end suite that drives the full HTTP stack against a real Postgres database, not mocks — wired
+into CI via GitHub Actions on every push.
 
 ## Project structure
 
@@ -44,7 +53,8 @@ render.yaml           Render blueprint for deploying the backend
    ```
    App runs at `http://localhost:5173`.
 
-Run the backend test suite (settle-up algorithm + split math) with `npm test` from `backend/`.
+Run the backend unit tests with `npm test` from `backend/`, or the full e2e suite (needs the Postgres
+container running) with `npm run test:e2e`. Frontend tests run with `npm run test` from `frontend/`.
 
 ## Deploying
 
@@ -63,3 +73,7 @@ Run the backend test suite (settle-up algorithm + split math) with `npm test` fr
 
 After deploying, update the backend's `FRONTEND_URL` to the live Vercel URL (needed for CORS and invite
 links) and redeploy.
+
+## License
+
+[MIT](LICENSE)
