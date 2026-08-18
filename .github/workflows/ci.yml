@@ -50,13 +50,29 @@ jobs:
         run: npm run lint
 
       - name: Unit tests
-        run: npm test
+        run: npm run test:cov
+
+      - name: Upload backend unit coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: backend/coverage/lcov.info
+          flags: backend-unit
+          fail_ci_if_error: false
 
       - name: Run database migrations
         run: npx prisma migrate deploy
 
       - name: E2E tests (real Postgres)
-        run: npm run test:e2e
+        run: npm run test:e2e:cov
+
+      - name: Upload backend e2e coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: backend/coverage-e2e/lcov.info
+          flags: backend-e2e
+          fail_ci_if_error: false
 
       - name: Build
         run: npm run build
@@ -83,7 +99,15 @@ jobs:
         run: npm run lint
 
       - name: Test
-        run: npm run test
+        run: npm run test:cov
+
+      - name: Upload frontend coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: frontend/coverage/lcov.info
+          flags: frontend
+          fail_ci_if_error: false
 
       - name: Build
         run: npm run build

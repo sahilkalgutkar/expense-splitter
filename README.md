@@ -1,5 +1,11 @@
 # SplitEasy
 
+[![CI](https://github.com/sahilkalgutkar/expense-splitter/actions/workflows/ci.yml/badge.svg)](https://github.com/sahilkalgutkar/expense-splitter/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/sahilkalgutkar/expense-splitter/branch/main/graph/badge.svg)](https://codecov.io/gh/sahilkalgutkar/expense-splitter)
+[![patch coverage](https://img.shields.io/badge/patch%20coverage-min%2080%25-blue.svg)](codecov.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node.js 22+](https://img.shields.io/badge/node-22%2B-blue.svg)](https://nodejs.org/)
+
 A mini Splitwise: group expense tracking, settle-up math, and recurring bills for roommates and trips.
 
 I built the backend with NestJS, Prisma, and PostgreSQL, with JWT access tokens paired with rotating
