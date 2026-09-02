@@ -40,6 +40,11 @@ render.yaml           Render blueprint for deploying the backend
    ```bash
    docker compose up -d
    ```
+   It publishes on host port 5433 rather than 5432, to stay out of the way of a
+   system Postgres — but that collides just as easily with another project that
+   made the same choice, so the port is overridable with `POSTGRES_HOST_PORT`
+   (see `.env.example`). If you move it, `backend/.env`'s `DATABASE_URL` has to
+   name the same port.
 2. Backend:
    ```bash
    cd backend
